@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: pizzas_api
+    ports:
+      - '3000:3000'
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - pizzas_network
+
+  db:
+    image: postgres:16
+    container_name: pizzas_db
+    restart: always
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pizzas_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - pizzas_network
+
+networks:
+  pizzas_network:
+
+volumes:
+  pgdata:
