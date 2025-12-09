@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Order } from './Order';
 
 @Entity()
 export class Customer {
@@ -18,5 +19,6 @@ export class Customer {
   @Column()
   mdp: string;
 
-  // Relations à ajouter selon notre modèle
+@OneToMany(() => Order, order => order.customer)
+  orders: Order[];
 }

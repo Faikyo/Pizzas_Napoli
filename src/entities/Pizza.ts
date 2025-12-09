@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { OrderItem } from './OrderItem';
 
 @Entity()
 export class Pizza {
@@ -14,5 +15,6 @@ export class Pizza {
   @Column({ nullable: true })
   ingredients: string[];
 
-  // Relations à ajouter selon notre modèle
+  @OneToMany(() => OrderItem, orderItem => orderItem.pizza)
+  orderItems: OrderItem[];
 }

@@ -1,12 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Customer } from './Customer';
+import { OrderItem } from './OrderItem';
 
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
   idOrder: number;
-
-  @Column()
-  nom: string;
 
   @Column('decimal', { precision: 5, scale: 2 })
   total: number;
@@ -17,6 +16,10 @@ export class Order {
   @Column({ nullable: true })
   statut : boolean
 
+@ManyToOne(() => Customer, customer => customer.orders)
+  customer: Customer;
 
-  // Relations à ajouter selon notre modèle
+  @OneToMany(() => OrderItem, orderItem => orderItem.order)
+  orderItems: OrderItem[];
+
 }
