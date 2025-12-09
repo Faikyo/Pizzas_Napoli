@@ -12,13 +12,12 @@ export class Customer {
   @Column()
   prenom: string;
 
-
   @Column()
   email: string;
 
   @Column()
   mdp: string;
 
-@OneToMany(() => Order, order => order.customer)
+  @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];
 }

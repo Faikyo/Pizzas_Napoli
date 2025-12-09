@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Customer } from './Customer';
 import { OrderItem } from './OrderItem';
 
@@ -14,12 +20,11 @@ export class Order {
   date: Date;
 
   @Column({ nullable: true })
-  statut : boolean
+  statut: boolean;
 
-@ManyToOne(() => Customer, customer => customer.orders)
+  @ManyToOne(() => Customer, (customer) => customer.orders)
   customer: Customer;
 
-  @OneToMany(() => OrderItem, orderItem => orderItem.order)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];
-
 }

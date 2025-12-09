@@ -10,10 +10,9 @@ export class OrderItem {
   @Column()
   quantite: number;
 
-
- @ManyToOne(() => Order, order => order.orderItems)
+  @ManyToOne(() => Order, (order) => order.orderItems)
   order: Order;
 
-  @ManyToOne(() => Pizza, pizza => pizza.orderItems)
+  @ManyToOne(() => Pizza, (pizza) => pizza.orderItems)
   pizza: Pizza;
 }
