@@ -6,6 +6,7 @@ import { CustomersModule } from './customers/customers.module';
 import { PizzasModule } from './pizzas/pizzas.module';
 import { OrdersModule } from './orders/orders.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -24,7 +25,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CustomersModule,
     PizzasModule,
-    OrdersModule,],
+    OrdersModule,
+    AuthModule,],
   controllers: [AppController],
   providers: [AppService],
 })
