@@ -92,19 +92,19 @@ export async function seedDatabase() {
         nom: 'Dupont',
         prenom: 'Jean',
         email: 'jean.dupont@example.com',
-        motDePasse: 'password123',
+        mdp: 'password123',
       },
       {
         nom: 'Martin',
         prenom: 'Marie',
         email: 'marie.martin@example.com',
-        motDePasse: 'password123',
+        mdp: 'password123',
       },
       {
         nom: 'Dubois',
         prenom: 'Pierre',
         email: 'pierre.dubois@example.com',
-        motDePasse: 'password123',
+        mdp: 'password123',
       },
     ]);
     console.log(`✅ ${customers.length} clients créés`);
