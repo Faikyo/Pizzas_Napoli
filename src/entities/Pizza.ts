@@ -12,9 +12,9 @@ export class Pizza {
   @Column('decimal', { precision: 5, scale: 2 })
   prix: number;
 
-  @Column({ nullable: true })
+  @Column('simple-array', { nullable: true })
   ingredients: string[];
 
-  @OneToMany(() => OrderItem, orderItem => orderItem.pizza)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.pizza)
   orderItems: OrderItem[];
 }
