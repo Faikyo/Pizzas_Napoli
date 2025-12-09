@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../entities/Order';
@@ -19,44 +23,46 @@ export class OrdersService {
     private pizzasService: PizzasService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+  async create(
+    createOrderDto: CreateOrderDto,
+    customerId: number,
+  ): Promise<Order> {
     // Vérifier que le client existe
-    const customer = await this.customersService.findOne(createOrderDto.customerId);
-    
+    const customer = await this.customersService.findOne(customerId);
+
     // Créer la commande
     const order = this.ordersRepository.create({
       customer,
       date: new Date(),
-      statut: createOrderDto.statut ?? false,
+      statut: false, // Toujours "pending" à la création
       total: 0,
     });
-    
+
     const savedOrder = await this.ordersRepository.save(order);
-    
+
     // Créer les items et calculer le total
     let total = 0;
     const orderItems: OrderItem[] = [];
-    
+
     for (const itemDto of createOrderDto.items) {
       const pizza = await this.pizzasService.findOne(itemDto.pizzaId);
-      
+
       const orderItem = this.orderItemsRepository.create({
         order: savedOrder,
         pizza,
         quantite: itemDto.quantite,
       });
-      
+
       orderItems.push(orderItem);
-      total += pizza.prix * itemDto.quantite;
+      total += Number(pizza.prix) * itemDto.quantite;
     }
-    
+
     await this.orderItemsRepository.save(orderItems);
-    
+
     // Mettre à jour le total
     savedOrder.total = total;
     return this.ordersRepository.save(savedOrder);
   }
-
   async findAll(): Promise<Order[]> {
     return this.ordersRepository.find({
       relations: ['customer', 'orderItems', 'orderItems.pizza'],
@@ -68,11 +74,9 @@ export class OrdersService {
       where: { idOrder: id },
       relations: ['customer', 'orderItems', 'orderItems.pizza'],
     });
-    
     if (!order) {
       throw new NotFoundException(`Order #${id} not found`);
     }
-    
     return order;
   }
 

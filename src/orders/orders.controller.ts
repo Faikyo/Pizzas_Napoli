@@ -1,42 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  Request,
+  ForbiddenException,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
-@Controller('orders')
+@Controller()
+@UseGuards(AuthGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  //  Créer une commande pour le client connecté
+  @Post('orders')
+  create(@Body() createOrderDto: CreateOrderDto, @Request() req) {
+    const customerId = req.user.sub;
+    return this.ordersService.create(createOrderDto, customerId);
   }
 
-  @Get()
-  findAll() {
-    return this.ordersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.findOne(id);
-  }
-
-  @Get('customer/:customerId')
-  findByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
+  //  Liste toutes les commandes du client connecté
+  @Get('my/orders')
+  findMyOrders(@Request() req) {
+    const customerId = req.user.sub;
     return this.ordersService.findByCustomer(customerId);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateOrderDto: UpdateOrderDto,
-  ) {
-    return this.ordersService.update(id, updateOrderDto);
+  // Consulte une commande du client
+  @Get('my/orders/:id')
+  async findMyOrder(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    const customerId = req.user.sub;
+    const order = await this.ordersService.findOne(id);
+
+    // Vérifier que la commande appartient au client connecté
+    if (order.customer.idCustomer !== customerId) {
+      throw new ForbiddenException('This order does not belong to you');
+    }
+
+    return order;
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.remove(id);
+  // P Met à jour le statut d'une commande du client
+  @Put('my/orders/:id')
+  async updateMyOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+    @Request() req,
+  ) {
+    const customerId = req.user.sub;
+    const order = await this.ordersService.findOne(id);
+
+    // Vérifier que la commande appartient au client connecté
+    if (order.customer.idCustomer !== customerId) {
+      throw new ForbiddenException('This order does not belong to you');
+    }
+
+    return this.ordersService.update(id, updateOrderDto);
   }
 }

@@ -1,17 +1,17 @@
-import { DataSource } from "typeorm";
+import { DataSource } from 'typeorm';
+import { Pizza } from './entities/Pizza';
+import { Customer } from './entities/Customer';
+import { Order } from './entities/Order';
+import { OrderItem } from './entities/OrderItem';
 
 export const AppDataSource = new DataSource({
-  type: "postgres",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || "5432"),
-  username: process.env.DB_USERNAME ,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME || "pizzas_napoli",
-  synchronize: true, // Génère le schéma automatiquement
-  entities: ["src/entity/*.ts"],
+  type: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  username: process.env.POSTGRES_USER || 'postgres',
+  password: process.env.POSTGRES_PASSWORD || 'postgres',
+  database: process.env.POSTGRES_DB || 'pizzas_napoli',
+  synchronize: true,
+  entities: [Pizza, Customer, Order, OrderItem],
   logging: true,
 });
-
-AppDataSource.initialize()
-  .then(() => console.log("Data Source has been initialized!"))
-  .catch((err) => console.error("Error during Data Source initialization:", err));
