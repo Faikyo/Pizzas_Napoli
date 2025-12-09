@@ -7,6 +7,9 @@ import { Customer } from './entities/Customer';
 import { Pizza } from './entities/Pizza';
 import { Order } from './entities/Order';
 import { OrderItem } from './entities/OrderItem';
+import { CustomersModule } from './customers/customers.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemsModule } from './order-items/order-items.module';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { OrderItem } from './entities/OrderItem';
       synchronize: true, // à désactiver en production
     }),
     PizzasModule,
+    CustomersModule,
+    OrdersModule,
+    OrderItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
